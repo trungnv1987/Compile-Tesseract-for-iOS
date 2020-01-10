@@ -59,10 +59,6 @@ $(libtifffat) : $(libtiff)
 	mkdir -p $(TIFF_SRC_DIR)
 	cp -rvf $(firstword $(libtifffolders))/include/*.h $(TIFF_SRC_DIR)	
 
-#trung.nv change path of tiff src
-# mkdir -p $(IMAGE_INC_DIR) 
-# cp -rvf $(firstword $(libtifffolders))/include/*.h $(IMAGE_INC_DIR)		
-
 $(libtiff) :  $(libtiffmakefile)
 	cd $(abspath $(@D)/..) ; \
 	$(MAKE) -sj8 && $(MAKE) install
@@ -84,11 +80,6 @@ $(libpngfat) : $(libpng)
 	mkdir -p $(PNG_SRC_DIR)
 	cp -rvf $(firstword $(libpngfolders))/include/*.h $(PNG_SRC_DIR)
 
-#trung.nv change path of png src
-# mkdir -p $(IMAGE_INC_DIR) 
-# cp -rvf $(firstword $(libpngfolders))/include/*.h $(IMAGE_INC_DIR)		
-
-
 $(libpng) : $(libpngmakefile)
 	cd $(abspath $(@D)/..) ; \
 	$(MAKE) -sj8 && $(MAKE) install
@@ -109,10 +100,6 @@ $(libjpegfat) : $(libjpeg)
 	xcrun lipo $(realpath $(addsuffix lib/$(@F), $(libjpegfolders_all)) ) -create -output $@
 	mkdir -p $(JPEG_SRC_DIR)
 	cp -rvf $(firstword $(libjpegfolders))/include/*.h $(JPEG_SRC_DIR)
-
-#trung.nv change path of jpeg src
-# mkdir -p $(IMAGE_INC_DIR) 
-# cp -rvf $(firstword $(libjpegfolders))/include/*.h $(IMAGE_INC_DIR)		
 
 $(libjpeg) : $(libjpegmakefile)
 	cd $(abspath $(@D)/..) ; \
@@ -139,3 +126,69 @@ $(libjpegconfig) :
 $(libpngconfig) :		
 	curl https://nchc.dl.sourceforge.net/project/libpng/libpng16/$(PNG_VERSION)/$(PNG_NAME).tar.xz | tar -xpf-
 
+#######################
+# Clean
+#######################
+.PHONY : clean
+clean : cleanimages cleanlept cleantess
+
+.PHONY : distclean
+distclean : distcleanimages distcleanlept distcleantess
+
+.PHONY : mostlyclean
+mostlyclean : mostlycleanimages mostlycleanlept mostlycleantess
+
+.PHONY : cleanimages
+cleanimages :
+	cd $(IMAGE_SRC) ; \
+	$(MAKE) clean
+
+.PHONY : cleanlept
+cleanlept :
+	for folder in $(realpath $(libleptfolders_all) ); do \
+        cd $$folder; \
+        $(MAKE) clean; \
+	done ;
+
+.PHONY : cleantess
+cleantess :
+	for folder in $(realpath $(libtessfolders_all) ); do \
+        cd $$folder; \
+        $(MAKE) clean; \
+    done ;
+
+.PHONY : mostlycleanimages
+mostlycleanimages :
+
+.PHONY : mostlycleanlept
+mostlycleanlept :
+	for folder in $(realpath $(libleptfolders) ); do \
+        cd $$folder; \
+        $(MAKE) mostlyclean; \
+    done ;
+
+.PHONY : mostlycleantess
+mostlycleantess :
+	for folder in $(realpath $(libtessfolders_all) ); do \
+        cd $$folder; \
+        $(MAKE) mostlyclean; \
+    done ;
+
+.PHONY : distcleanimages
+distcleanimages :
+	-rm -rf $(IMAGE_SRC)
+
+PHONY : distcleanlept
+distcleanlept :
+	-rm -rf $(LEPT_INC_DIR)/leptonica
+	-rm -rf $(libleptfat)
+	-rm -rf $(LEPTON_SRC)
+
+.PHONY : distcleantess
+distcleantess :
+	-rm -rf $(TESS_INC_DIR)/tesseract
+	-rm -rf $(libtessfat)
+	-rm -rf $(TESSERACT_SRC)
+
+.PHONY : FORCE
+FORCE :

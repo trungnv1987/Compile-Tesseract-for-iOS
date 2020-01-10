@@ -3,7 +3,16 @@
 
 ### Steps to compile Tesseract lib and dependencies for iOS version only
 
+#### Prepreapre libs
+brew install automake autoconf autoconf-archive libtool pkgconfig icu4c leptonica gcc cairo pango icu4c autoconf libffi libarchive wget
+export PKG_CONFIG_PATH=\
+$(brew --prefix)/lib/pkgconfig:\
+$(brew --prefix)/opt/libarchive/lib/pkgconfig:\
+$(brew --prefix)/opt/icu4c/lib/pkgconfig:\
+$(brew --prefix)/opt/libffi/lib/pkgconfig
+
 #### Step 1
+
 Open Terminal app and run the following commands:<br/>
 ```
 mkdir -p dependencies/include
@@ -22,8 +31,9 @@ then rename like leptonica_1.79.0 at root folder
 
 #### Step 4 change version you want for libs in include/config.mk
 
-#### Step 5 edit in file tesseract/configure.ac 
 
+#### Step 5 edit in file tesseract/configure.ac 
+```
 AX_CHECK_COMPILE_FLAG([-mavx], [avx=true], [avx=false], [$WERROR])<br/>
 => AX_CHECK_COMPILE_FLAG([-mavx], [avx=false], [avx=false], [$WERROR])
 
@@ -38,6 +48,7 @@ AX_CHECK_COMPILE_FLAG([-mavx2], [avx2=true], [avx2=false], [$WERROR])<br/>
 
 PKG_CHECK_MODULES([libcurl], [libcurl], [have_libcurl=true], [have_libcurl=false])<br/>
 =>PKG_CHECK_MODULES([libcurl], [libcurl], [have_libcurl=false], [have_libcurl=false])
+```
 
 #### Step 6 fix "_opendir$INODE64" not found
     copy fix_opendir_INODE64.c to leptonica/src
@@ -73,3 +84,10 @@ Run make in foot folder
 	../configure --host=x86_64-apple-darwin --prefix=`pwd` --enable-shared=no --disable-graphics
     ```
     copy the error command to another terminal tab and run   
+
+# Fix  Leptonica 1.74 or higher is required. Try to install libleptonica-dev package.
+brew link --overwrite --dry-run leptonica
+
+# Fix error fatal error: 'allheaders.h' file not found, remember to specify version of tesseract and leptonica installed
+PKG_CONFIG_PATH="$PKG_CONFIG_PATH:/usr/local/Cellar/leptonica/1.79.0/lib/pkgconfig"
+PKG_CONFIG_PATH="$PKG_CONFIG_PATH:/usr/local/Cellar/tesseract/4.1.1/lib/pkgconfig"
