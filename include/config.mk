@@ -1,6 +1,6 @@
 
 
-IOS_DEPLOY_TGT 		= "11.0"
+IOS_DEPLOY_TGT 		= "8.0"
 PNG_VERSION 		= 1.6.37
 TIFF_VERSION    	= 4.1.0
 LEPT_VERSION		= 1.79.0
@@ -28,11 +28,12 @@ libpngfiles 	= libpng.a
 libjpegfiles 	= libjpeg.a
 libtifffiles 	= libtiff.a
 
-# archs_all = armv7 armv7s arm64  x86_64
-# arch_names_all = arm-apple-darwin7 arm-apple-darwin7s arm-apple-darwin64  x86_64-apple-darwin
+archs_all = armv7 armv7s arm64  x86_64
+arch_names_all = arm-apple-darwin7 arm-apple-darwin7s arm-apple-darwin64  x86_64-apple-darwin
 
-archs_all = arm64  x86_64
-arch_names_all = arm-apple-darwin64  x86_64-apple-darwin
+# archs_all = arm64  x86_64
+# arch_names_all = arm-apple-darwin64  x86_64-apple-darwin
+
 arch_names = $(foreach arch, $(ARCHS), $(call swap, $(arch), $(archs_all), $(arch_names_all) ) )
 ARCHS ?= $(archs_all)
 

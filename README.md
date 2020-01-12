@@ -1,6 +1,7 @@
 # Compile Tesseract for iOS
 
 
+
 ### Steps to compile Tesseract lib and dependencies for iOS version only
 
 ### Prepreapre libs
@@ -30,31 +31,36 @@ then rename like tesseract_4.1.1 at root folder
 download leptonica at  http://leptonica.org/download.html
 then rename like leptonica_1.79.0 at root folder
 
-### Step 4 Change version you want for libs in include/config.mk
-
+### Step 4 Change version of leptonica, tesseract and dependencies (png, jpeg,..) in include/config.mk    
+    IOS_DEPLOY_TGT 		= "8.0"
+    PNG_VERSION 		= 1.6.37
+    TIFF_VERSION    	= 4.1.0
+    LEPT_VERSION		= 1.79.0
+    JPEG_VERSION		= 9c
+    TESSERACT_VERSION 	= 4.1.1
 
 ### Step 5 Edit in file tesseract/configure.ac 
-```
-AX_CHECK_COMPILE_FLAG([-mavx], [avx=true], [avx=false], [$WERROR])
-=> AX_CHECK_COMPILE_FLAG([-mavx], [avx=false], [avx=false], [$WERROR])
 
-AX_CHECK_COMPILE_FLAG([-mfma], [fma=true], [fma=false], [$WERROR])
-=>AX_CHECK_COMPILE_FLAG([-mfma], [fma=false], [fma=false], [$WERROR])
+    AX_CHECK_COMPILE_FLAG([-mavx], [avx=true], [avx=false], [$WERROR])
+    => AX_CHECK_COMPILE_FLAG([-mavx], [avx=false], [avx=false], [$WERROR])
 
-AX_CHECK_COMPILE_FLAG([-msse4.1], [sse41=true], [sse41=false], [$WERROR])
-=>AX_CHECK_COMPILE_FLAG([-msse4.1], [sse41=false], [sse41=false], [$WERROR])
+    AX_CHECK_COMPILE_FLAG([-mfma], [fma=true], [fma=false], [$WERROR])
+    =>AX_CHECK_COMPILE_FLAG([-mfma], [fma=false], [fma=false], [$WERROR])
 
-AX_CHECK_COMPILE_FLAG([-mavx2], [avx2=true], [avx2=false], [$WERROR])
-=>AX_CHECK_COMPILE_FLAG([-mavx2], [avx2=false], [avx2=false], [$WERROR])
+    AX_CHECK_COMPILE_FLAG([-msse4.1], [sse41=true], [sse41=false], [$WERROR])
+    =>AX_CHECK_COMPILE_FLAG([-msse4.1], [sse41=false], [sse41=false], [$WERROR])
 
-PKG_CHECK_MODULES([libcurl], [libcurl], [have_libcurl=true], [have_libcurl=false])
-=>PKG_CHECK_MODULES([libcurl], [libcurl], [have_libcurl=false], [have_libcurl=false])
-```
+    AX_CHECK_COMPILE_FLAG([-mavx2], [avx2=true], [avx2=false], [$WERROR])
+    =>AX_CHECK_COMPILE_FLAG([-mavx2], [avx2=false], [avx2=false], [$WERROR])
+
+    PKG_CHECK_MODULES([libcurl], [libcurl], [have_libcurl=true], [have_libcurl=false])
+    =>PKG_CHECK_MODULES([libcurl], [libcurl], [have_libcurl=false], [have_libcurl=false])
+
 
 ### Step 6 Fix "_opendir$INODE64" not found
     copy fix_opendir_INODE64.c to leptonica/src
     include file to  leptonica/sarray1.c
-    ```#include "fix_opendir_INODE64.c" ```    
+    #include "fix_opendir_INODE64.c"
 
 ### Step 7 Fix 'curl/curl.h' file not found (Because the curl already included so this step may be not neccessary, but in case you have such error please replace my curl lib with your own curl lib)      
     download curl https://curl.haxx.se/download.html
@@ -88,3 +94,7 @@ brew link --overwrite --dry-run leptonica
 # Fix "fatal error: 'allheaders.h' file not found", remember to specify version of tesseract and leptonica installed
 PKG_CONFIG_PATH="$PKG_CONFIG_PATH:/usr/local/Cellar/leptonica/1.79.0/lib/pkgconfig"
 PKG_CONFIG_PATH="$PKG_CONFIG_PATH:/usr/local/Cellar/tesseract/4.1.1/lib/pkgconfig"
+
+# Thanks for
+https://github.com/kenticomartinh/Tesseract-OCR-iOS/tree/4.1
+https://github.com/tesseract-ocr/tesseract
